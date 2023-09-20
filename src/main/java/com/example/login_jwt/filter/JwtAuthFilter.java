@@ -33,7 +33,9 @@ import java.io.IOException;
             String authHeader = request.getHeader("Authorization");
             String token = null;
             String username = null;
+            System.out.println("Authorized");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                System.out.println("came");
                 token = authHeader.substring(7);
                 username = jwtService.extractUsername(token);
             }

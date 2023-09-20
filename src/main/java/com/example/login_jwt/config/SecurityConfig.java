@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+
 public class SecurityConfig {
 
     @Autowired
@@ -42,11 +43,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.cors().and().csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken").permitAll()
-                .and()
-                .authorizeHttpRequests().requestMatchers("/auth/user/**").authenticated()
-                .and()
-                .authorizeHttpRequests().requestMatchers("/auth/admin/**").authenticated()
+                .requestMatchers("/auth/getUser", "/auth/addNewUser", "/auth/generateToken", "/auth/getUserEmail/*").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

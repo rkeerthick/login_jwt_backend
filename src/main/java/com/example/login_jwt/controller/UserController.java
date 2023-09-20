@@ -12,9 +12,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin
 public class UserController {
 
     @Autowired
@@ -36,6 +39,12 @@ public class UserController {
         return service.addUser(userInfo);
     }
 
+    @PostMapping("/getUser")
+    public String getUserByEmail(@RequestBody AuthRequest authRequest) {
+        System.out.println("1");
+        System.out.println(authRequest);
+        return service.authUser(authRequest); }
+
     @GetMapping("/user/userProfile")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public String userProfile() {
@@ -50,13 +59,29 @@ public class UserController {
 
     @PostMapping("/generateToken")
     public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
         System.out.println("HI");
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authRequest.getUsername());
+            return jwtService.generateToken(authRequest.getEmail());
         } else {
             throw new UsernameNotFoundException("invalid user request !");
         }
+    }
+
+    @GetMapping("/getAllUsers")
+    public List<UserInfo> getAllUsers() {
+        System.out.println("list");
+        return service.getAllUsers();
+    }
+
+    @GetMapping("/getUserEmail/{email}")
+    public UserInfo getUserByEmail(@PathVariable String email) {
+        return service.getByEmail(email);
+    }
+
+    @PutMapping("/update")
+    public String updateUser(@RequestBody UserInfo userInfo) {
+        return service.updateUser(userInfo);
     }
 
 }
